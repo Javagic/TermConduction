@@ -11,7 +11,6 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import solvers.ConductivitySolver;
 import solvers.OldConductivitySolver;
 
 import javax.swing.event.ChangeEvent;
@@ -40,6 +39,8 @@ public class OldMainFrame extends JFrame {
     JLabel T_label = new JLabel("Время, с: ");
     //    JTextField T_tf = new JTextField(6);
     JSlider T_slider = new JSlider(0, 100, 10);
+    JSlider N_slider = new JSlider(4, 1000, 10);
+    JSlider t_N_slider = new JSlider(4, 1000, 10);
     JLabel K_label = new JLabel("Коэфицент теплопроводности:");
     //    JSlider K_slider = new JSlider(1, 100, 40);
     //    JTextField K_tf = new JTextField(6);
@@ -58,7 +59,7 @@ public class OldMainFrame extends JFrame {
     TextField N_field = new TextField();
     TextField eps_field = new TextField();
     TextField c_field = new TextField();
-    JLabel emptyLabel = new JLabel("                           ");
+    JLabel emptyLabel = new JLabel("                                                 ");
     JButton button = new JButton("Рассчет");
 
     //    JTextField N_tf = new JTextField(6);
@@ -73,6 +74,8 @@ public class OldMainFrame extends JFrame {
     public OldMainFrame() {
         super("Term conductivity");
         initSlider(T_slider);
+        initSlider(N_slider);
+        initSlider(t_N_slider);
 //        initSlider(l_slider);
 //        initSlider(K_slider);
 //        initSlider(a_slider);
@@ -84,19 +87,25 @@ public class OldMainFrame extends JFrame {
         panel.setSize(300, 300);
         this.setResizable(false);
         panel.add(graphPanel);
-        addRightContent(l_label, l_field, false);
+        emptyLabel.setPreferredSize(new Dimension(550, 23));
+        panel.add(emptyLabel);
+        l_label.setPreferredSize(new Dimension(200, 23));
+        l_field.setPreferredSize(new Dimension(50, 23));
+        l_label.setHorizontalAlignment(SwingConstants.RIGHT);
+        panel.add(l_label);
+        panel.add(l_field);
 //        addRightContent(T_label, T_field, true);
         addRightContent(K_label, K_field, true);
         addRightContent(a_label, a_field, false);
         addRightContent(N_label, N_field, true);
         addRightContent(eps_label, eps_field, false);
         addRightContent(c_label, c_field, true);
-        emptyLabel.setPreferredSize(new Dimension(550, 23));
         panel.add(emptyLabel);
 
         T_label.setPreferredSize(new Dimension(500, 30));
-        panel.add(T_label);
         panel.add(T_slider);
+        panel.add(N_slider);
+        panel.add(t_N_slider);
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -197,8 +206,8 @@ public class OldMainFrame extends JFrame {
         if (right) {
             label.setHorizontalAlignment(SwingConstants.RIGHT);
         }
-        label.setPreferredSize(new Dimension(250, 23));
-        textField.setPreferredSize(new Dimension(300, 23));
+        label.setPreferredSize(new Dimension(50, 23));
+        textField.setPreferredSize(new Dimension(50, 23));
         panel.add(label);
         panel.add(textField);
     }
@@ -220,6 +229,8 @@ public class OldMainFrame extends JFrame {
     private void refreshSolver() {
         realConstants.l = Double.parseDouble(l_field.getText());
         realConstants.T = T_slider.getValue();
+        realConstants.N = N_slider.getValue();
+        realConstants.t_N = t_N_slider.getValue();
         realConstants.K = (Double.parseDouble(K_field.getText()) / 4) / Double.parseDouble(c_field.getText());
         realConstants.a = Double.parseDouble(a_field.getText());
         realConstants.N = Integer.parseInt(N_field.getText());

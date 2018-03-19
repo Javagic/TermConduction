@@ -19,7 +19,8 @@ public class DiffSolver {
     public double a =  0.003;
     public double c =1.84;
     double lambda = a / c;
-    int N = 100;
+    int N = 500;
+    int t_N = 500;
 
 
     public XYSeries createDataset() {
@@ -31,10 +32,11 @@ public class DiffSolver {
         for (int i = 0; i < T.length; i++) {
             T[i] = T0 * sin(PI * i * (h) / l);
         }
-        diff();
-        for (int i = 0; i < N - 1; i+=10) {
+        diff2();
+        for (int i = 0; i < N ; i++) {
             series.add(i * h, T[i]);
         }
+        series.add(l,T[N-1]);
         return series;
     }
 
@@ -48,6 +50,18 @@ public class DiffSolver {
         }
     }
 
+
+    private void diff2() {
+        for (int j = 0; j < t_N; j ++) {
+            System.arraycopy(T, 0, TT, 0, TT.length);
+            for (int i = 1; i < N - 1; i++) {
+                T[i] = TT[i] + ((lambda * tau * (TT[i + 1] - 2.0 * TT[i] + TT[i - 1])) / (h * h));
+            }
+            right();
+        }
+    }
+
+
     private void right() {
         T[N - 1] = T[N - 2] / (1 + h * a / k);
     }
@@ -55,9 +69,10 @@ public class DiffSolver {
     public void refresh(RealConstants realConstants) {
         l = realConstants.l;
         t_end = realConstants.T;
-        k = realConstants.K;
+        lambda = realConstants.K;
         c = realConstants.c;
         a = realConstants.a;
-        lambda = k/c;
+        N = realConstants.N;
+        t_N = realConstants.t_N;
     }
 }
