@@ -16,14 +16,14 @@ public class DiffSolver {
     double k = 0.04;
     double[] T;
     double[] TT;
-    public double a =  0.003;
-    public double c =1.84;
-    double lambda = a / c;
+    public double a = 0.003;
+    public double c = 1.84;
+    double K = k / c;
     int N = 500;
     int t_N = 500;
 
 
-    public XYSeries createDataset() {
+    public XYSeries createDataset(int count) {
         XYSeries series = new XYSeries("Разностное решение");
         h = l / (N - 1);
         T = new double[N];
@@ -32,30 +32,45 @@ public class DiffSolver {
         for (int i = 0; i < T.length; i++) {
             T[i] = T0 * sin(PI * i * (h) / l);
         }
-        diff2();
-        for (int i = 0; i < N ; i++) {
-            series.add(i * h, T[i]);
+        diff3();
+        series.add(0,0);
+        for (int i = 1; i < count; i++) {
+            series.add(i*l/count, T[i*N/count]);
         }
-        series.add(l,T[N-1]);
+        series.add(l, T[N - 1]);
         return series;
     }
 
-    private void diff() {
-        for (double j = 0; j < t_end; j += tau) {
+    private void fakediff() {
+        h = l / (600 - 1);
+        tau =( h*h/(4*K));
+        for (double j = 0; j < t_end; j +=tau) {
             System.arraycopy(T, 0, TT, 0, TT.length);
-            for (int i = 1; i < N - 1; i++) {
-                T[i] = TT[i] + ((lambda * tau * (TT[i + 1] - 2.0 * TT[i] + TT[i - 1])) / (h * h));
+            for (int i = 1; i < 600 - 1; i++) {
+                T[i] = TT[i] + ((K * tau * (TT[i + 1] - 2.0 * TT[i] + TT[i - 1])) / (h * h));
             }
-            right();
+            T[600 - 1] = T[600 - 2] / (1 + h * a / k);
         }
     }
 
 
     private void diff2() {
+
+        for (int j = 0; j < t_N; j++) {
+            System.arraycopy(T, 0, TT, 0, TT.length);
+            for (int i = 1; i < N - 1; i++) {
+                T[i] = TT[i] + ((K * tau * (TT[i + 1] - 2.0 * TT[i] + TT[i - 1])) / (h * h));
+            }
+            right();
+        }
+    }
+
+    private void diff3() {
+        tau = t_end / (t_N - 1);
         for (int j = 0; j < t_N; j ++) {
             System.arraycopy(T, 0, TT, 0, TT.length);
             for (int i = 1; i < N - 1; i++) {
-                T[i] = TT[i] + ((lambda * tau * (TT[i + 1] - 2.0 * TT[i] + TT[i - 1])) / (h * h));
+                T[i] = TT[i] + ((K * tau * (TT[i + 1] - 2.0 * TT[i] + TT[i - 1])) / (h * h));
             }
             right();
         }
@@ -69,10 +84,28 @@ public class DiffSolver {
     public void refresh(RealConstants realConstants) {
         l = realConstants.l;
         t_end = realConstants.T;
-        lambda = realConstants.K;
+        k = realConstants.k;
         c = realConstants.c;
+        K = k/c;
         a = realConstants.a;
         N = realConstants.N;
         t_N = realConstants.t_N;
+    }
+
+    public XYSeries createFakeDataset(int count) {
+        XYSeries series = new XYSeries("Распределение температуры по длине стержня");
+        h = l / (600 - 1);
+        T = new double[600];
+        TT = new double[600];
+        for (int i = 0; i < T.length; i++) {
+            T[i] = T0 * sin(PI * i * (h) / l);
+        }
+        fakediff();
+        series.add(0,0);
+        for (int i = 1; i < count; i++) {
+            series.add(i*l/count, T[i*600/count]);
+        }
+        series.add(l, T[600 - 1]);
+        return series;
     }
 }

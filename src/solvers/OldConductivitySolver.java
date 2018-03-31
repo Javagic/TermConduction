@@ -13,26 +13,28 @@ public class OldConductivitySolver {
     public double s = 0.000001d;
     public int T;
     public double u0 = 0d;
+    public double k;
     public double K;
     public double c;
     public double a;
     public double eps;
-    public int N;
     double En = 0;
     double w = sqrt(En) * l;
     double v = -PI / 2 + eps;
 
     public OldConductivitySolver() {
     }
-public void refresh(RealConstants realConstants){
-    l = realConstants.l;
-    T = realConstants.T;
-    K = realConstants.K;
-    c = realConstants.c;
-    a = realConstants.a;
-    N = realConstants.N;
-    eps = realConstants.eps;
-}
+
+    public void refresh(RealConstants realConstants) {
+        l = realConstants.l;
+        T = realConstants.T;
+        k = realConstants.k;
+        c = realConstants.c;
+        a = realConstants.a;
+        eps = realConstants.eps;
+        K = k/c;
+    }
+
     public void find_En(int i) {
         int count = 0;
         double left = v + PI;
@@ -60,16 +62,16 @@ public void refresh(RealConstants realConstants){
         if (x == 0) return 0;
         double result = 0;
         double d = 0;
-        for (int i = 1; i <= N; i++) {
+        for (int i = 1; i <= 20; i++) {
             find_En(i);
             w = sqrt(En) * l;
             d = coef_An() * integral_An() * sin(w * x / l) * exp(-K * En * t);
             result += d;
-            System.out.println("n=" + i + " Vn =" + d);
+           // System.out.println("n=" + i + " Vn =" + d);
             if (abs(d) < -1E-30) {
                 break;
             }
-            System.out.println("En: " + En);
+           // System.out.println("En: " + En);
         }
         v = -PI / 2 + eps;
         return result;
@@ -90,4 +92,6 @@ public void refresh(RealConstants realConstants){
     double ksi(double x) {
         return sin(PI * x / l) + u0;
     }
+
+
 }
