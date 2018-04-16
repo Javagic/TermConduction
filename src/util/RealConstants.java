@@ -8,7 +8,7 @@ public class RealConstants {
     public int T = 10;
     public double k = 0.04;
     public double a = 0.003;
-    public int N = 6;
+    public int N = 10;
     public int t_N = 23;
     public double eps = 0.001;
     public double c = 1.84;

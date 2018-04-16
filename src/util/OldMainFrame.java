@@ -135,7 +135,6 @@ public class OldMainFrame extends JFrame {
         //realConstants.eps = Double.parseDouble(eps_field.getText());
         realConstants.c = Double.parseDouble(c_field.getText());
         datasetHelper.evaluate();
-        refreshLabels();
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {

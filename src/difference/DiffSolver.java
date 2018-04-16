@@ -22,7 +22,6 @@ public class DiffSolver {
     int N = 500;
     int t_N = 500;
 
-
     public XYSeries createDataset(int count) {
         XYSeries series = new XYSeries("Разностное решение");
         h = l / (N - 1);
@@ -41,30 +40,6 @@ public class DiffSolver {
         return series;
     }
 
-    private void fakediff() {
-        h = l / (600 - 1);
-        tau =( h*h/(4*K));
-        for (double j = 0; j < t_end; j +=tau) {
-            System.arraycopy(T, 0, TT, 0, TT.length);
-            for (int i = 1; i < 600 - 1; i++) {
-                T[i] = TT[i] + ((K * tau * (TT[i + 1] - 2.0 * TT[i] + TT[i - 1])) / (h * h));
-            }
-            T[600 - 1] = T[600 - 2] / (1 + h * a / k);
-        }
-    }
-
-
-    private void diff2() {
-
-        for (int j = 0; j < t_N; j++) {
-            System.arraycopy(T, 0, TT, 0, TT.length);
-            for (int i = 1; i < N - 1; i++) {
-                T[i] = TT[i] + ((K * tau * (TT[i + 1] - 2.0 * TT[i] + TT[i - 1])) / (h * h));
-            }
-            right();
-        }
-    }
-
     private void diff3() {
         tau = t_end / (t_N - 1);
         for (int j = 0; j < t_N; j ++) {
@@ -75,7 +50,6 @@ public class DiffSolver {
             right();
         }
     }
-
 
     private void right() {
         T[N - 1] = T[N - 2] / (1 + h * a / k);
@@ -90,22 +64,5 @@ public class DiffSolver {
         a = realConstants.a;
         N = realConstants.N;
         t_N = realConstants.t_N;
-    }
-
-    public XYSeries createFakeDataset(int count) {
-        XYSeries series = new XYSeries("Распределение температуры по длине стержня");
-        h = l / (600 - 1);
-        T = new double[600];
-        TT = new double[600];
-        for (int i = 0; i < T.length; i++) {
-            T[i] = T0 * sin(PI * i * (h) / l);
-        }
-        fakediff();
-        series.add(0,0);
-        for (int i = 1; i < count; i++) {
-            series.add(i*l/count, T[i*600/count]);
-        }
-        series.add(l, T[600 - 1]);
-        return series;
     }
 }

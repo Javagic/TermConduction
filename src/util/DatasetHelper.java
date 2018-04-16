@@ -32,7 +32,7 @@ public class DatasetHelper {
     public XYSeriesCollection createDataset() {
         final XYSeries series0 = new XYSeries("Начальная температура");
        // final XYSeries series3 = diffSolver.createFakeDataset(10);
-        final XYSeries series1 = new XYSeries("Распределение температуры по длине стержня");
+        final XYSeries series1 = new XYSeries("Аналитическое решение");
         final XYSeries series2 = diffSolver.createDataset(10);
         double x = 0;
         for (int i = 0; i <= 10; i++) {
@@ -52,7 +52,7 @@ public class DatasetHelper {
         }
 
       //  dataset.addSeries(series3);
-        dataset.addSeries(series0);
+        //dataset.addSeries(series0);
         dataset.addSeries(series2);
         return dataset;
     }
